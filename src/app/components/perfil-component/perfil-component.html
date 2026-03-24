@@ -1,0 +1,89 @@
+<div class="w-full max-w-[800px] mx-auto px-6 py-12">
+
+  <div class="flex gap-1 border-b border-primary/10 mb-8">
+    @for (tab of tabs; track tab.id) {
+      <button
+        (click)="activeTab.set(tab.id)"
+        class="px-5 py-3 border-b-2 border-transparent text-primary/50 hover:text-primary hover:border-primary/30 transition-all font-medium text-sm"
+        [class.border-primary]="activeTab() === tab.id"
+        [class.text-primary]="activeTab() === tab.id"
+        [class.font-bold]="activeTab() === tab.id"
+      >
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (activeTab() === 'info') {
+    <div class="bg-white rounded-2xl border border-primary/5 shadow-sm p-8 space-y-5">
+
+      <h3 class="font-extrabold text-natural-text text-lg mb-6">Información de la cuenta</h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Nombre completo</label>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userName }}</div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Correo electrónico</label>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userEmail }}</div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Tipo de cuenta</label>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userRole }}</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (activeTab() === 'solicitudes') {
+    @if (solicitudes().length === 0) {
+      <div class="text-center py-20 bg-white rounded-2xl border border-primary/5 shadow-sm">
+        <span class="material-symbols-outlined text-5xl text-primary/20 mb-4 block">pets</span>
+        <h3 class="font-extrabold text-natural-text text-lg mb-2">Aún no tienes solicitudes</h3>
+        <p class="text-sm text-primary/50 mb-6">Envía tu primera solicitud.</p>
+        <a routerLink="/adoptar"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold text-sm rounded-full hover:bg-sage-dark transition-all">
+          <span class="material-symbols-outlined text-sm">search</span>
+          Ver gatos disponibles
+        </a>
+      </div>
+    } @else {
+      <div class="space-y-4">
+        @for (sol of solicitudes(); track sol.id) {
+          <div class="bg-white rounded-2xl border border-primary/5 shadow-sm overflow-hidden flex">
+
+            <div class="w-28 h-28 flex-shrink-0 bg-sage-light overflow-hidden">
+              @if (sol.catPhoto) {
+                <img [src]="sol.catPhoto" [alt]="sol.catName" class="w-full h-full object-cover" />
+              }@else {
+                <div class="w-full h-full flex items-center justify-center">
+                  <span class="material-symbols-outlined text-3xl text-primary/20">pets</span>
+                </div>
+              }
+            </div>
+            <div class="flex-1 p-5 flex items-center justify-between gap-4">
+              <div>
+                <h4 class="font-extrabold text-natural-text mb-1">{{ sol.catName }}</h4>
+                <p class="text-xs text-primary/50">{{ formatDate(sol.createdAt) }}</p>
+              </div>
+              <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex-shrink-0">
+                {{ statusLabel[sol.status] }}
+              </span>
+            </div>
+
+          </div>
+        }
+
+        <div class="text-center pt-4">
+          <a routerLink="/adoptar"
+            class="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-sage-dark transition-colors">
+            <span class="material-symbols-outlined text-sm">add_circle</span>
+            Hacer otra solicitud
+          </a>
+        </div>
+      </div>
+    }
+  }
+
+</div>

@@ -1,0 +1,12 @@
+<div class="bg-white p-6 rounded-2xl border border-primary/10 shadow-sm hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-primary/60 text-xs font-bold uppercase tracking-wider">{{ label }}</span>
+        <div class="p-2 bg-sage-light rounded-lg">
+          <span class="material-symbols-outlined text-primary">{{ icon }}</span>
+        </div>
+      </div>
+      <div class="text-4xl font-extrabold text-natural-text">{{ value }}</div>
+      @if (subtitle) {
+        <p class="text-xs text-primary/50 mt-2">{{ subtitle }}</p>
+      }
+</div>

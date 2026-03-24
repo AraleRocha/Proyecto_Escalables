@@ -1,0 +1,7 @@
+<div class="space-y-8">
+  <app-adoption-table-component
+    [requests]="requests()"
+    (approve)="approve($event)"
+    (reject)="reject($event)"
+  />
+</div>

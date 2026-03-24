@@ -1,0 +1,96 @@
+<main class="flex-grow flex items-center justify-center py-12 px-6">
+  <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-3xl shadow-xl overflow-hidden border border-primary/5">
+
+    <div class="hidden lg:flex relative min-h-[600px] items-end p-12"
+      style="background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)), url('https://images.ctfassets.net/denf86kkcx7r/4IPlg4Qazd4sFRuCUHIJ1T/f6c71da7eec727babcd554d843a528b8/gatocomuneuropeo-97') center/cover">
+      <div class="text-white">
+        <h2 class="text-4xl font-light italic mb-2">
+          {{ mode() === 'login' ? 'Bienvenido de vuelta' : 'Únete a nosotros' }}
+        </h2>
+      </div>
+    </div>
+
+    <div class="p-8 md:p-12 flex flex-col justify-center">
+      <div class="flex gap-4 mb-8 border-b border-primary/10">
+        <button (click)="setMode('login')"
+          [class.border-primary]="mode() === 'login'"
+          [class.text-primary]="mode() === 'login'"
+          [class.font-bold]="mode() === 'login'"
+          class="pb-3 text-sm border-b-2 border-transparent text-primary/40 transition-all">
+          Iniciar Sesión
+        </button>
+        <button (click)="setMode('register')"
+          [class.border-primary]="mode() === 'register'"
+          [class.text-primary]="mode() === 'register'"
+          [class.font-bold]="mode() === 'register'"
+          class="pb-3 text-sm border-b-2 border-transparent text-primary/40 transition-all">
+          Registrarse
+        </button>
+      </div>
+      @if (errorMessage()) {
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          {{ errorMessage() }}
+        </div>
+      }
+      @if (mode() === 'login') {
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Correo electrónico</label>
+            <input formControlName="email" type="email" placeholder="ejemplo@correo.com"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="block text-xs font-bold uppercase tracking-widest text-primary">Contraseña</label>
+              <a href="#" class="text-[10px] uppercase font-bold text-primary/60 hover:text-primary">¿Olvidaste tu contraseña?</a>
+            </div>
+            <input formControlName="password" type="password" placeholder="••••••••"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <button type="submit" [disabled]="loginForm.invalid || isSubmitting()"
+            class="w-full py-4 bg-primary text-white font-bold rounded-lg hover:bg-sage-dark transition-all shadow-md disabled:opacity-60">
+            {{ isSubmitting() ? 'Ingresando...' : 'Iniciar Sesión' }}
+          </button>
+        </form>
+      }
+
+      @if (mode() === 'register') {
+        <div class="grid grid-cols-4 gap-3 mb-6">
+          @for (role of roles; track role.value) {
+            <label class="cursor-pointer">
+              <input type="radio" name="role" [value]="role.value" class="peer hidden"
+                [checked]="selectedRole() === role.value"
+                (change)="selectedRole.set(role.value)" />
+              <div class="flex flex-col items-center p-3 rounded-xl border border-primary/10 bg-crema peer-checked:bg-sage-light peer-checked:border-primary transition-all text-center">
+                <span class="material-symbols-outlined text-primary mb-1">{{ role.icon }}</span>
+                <span class="text-[10px] font-bold uppercase text-primary/70">{{ role.label }}</span>
+              </div>
+            </label>
+          }
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Nombre</label>
+            <input formControlName="name" type="text" placeholder="Tu nombre completo"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Email</label>
+            <input formControlName="email" type="email" placeholder="ejemplo@correo.com"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Contraseña</label>
+            <input formControlName="password" type="password" placeholder="Mínimo 6 caracteres"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <button type="submit" [disabled]="registerForm.invalid || isSubmitting()"
+            class="w-full py-4 bg-primary text-white font-bold rounded-lg hover:bg-sage-dark transition-all shadow-md disabled:opacity-60">
+            {{ isSubmitting() ? 'Creando cuenta...' : 'Crear cuenta' }}
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+</main>

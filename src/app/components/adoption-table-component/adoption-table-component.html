@@ -1,0 +1,81 @@
+<div class="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-hidden">
+
+  <div class="px-8 py-6 border-b border-primary/5 flex items-center justify-between">
+    <h3 class="font-bold text-lg">Solicitudes de Adopción</h3>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-sage-light/30">
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">Adoptante</th>
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">Gato</th>
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">Fecha</th>
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">Estado</th>
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-primary/5">
+        @for (req of requests; track req.id) {
+          <tr class="hover:bg-crema/50 transition-colors">
+            <td class="px-8 py-5">
+              <div class="flex items-center gap-3">
+                <div>
+                  <div class="font-bold text-sm">{{ req.applicantName }}</div>
+                  <div class="text-[11px] text-primary/60">{{ req.applicantEmail }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-8 py-5">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-medium">{{ req.catName }}</span>
+              </div>
+            </td>
+
+            <td class="px-8 py-5 text-sm text-primary/70">
+              {{ req.createdAt | date:'dd MMM yyyy' }}
+            </td>
+
+            <td class="px-8 py-5">
+              <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider capitalize">
+                {{ req.status }}
+              </span>
+            </td>
+
+            <td class="px-8 py-5">
+              <div class="flex justify-end gap-2">
+                @if (req.status === 'pendiente') {
+                  <button
+                    (click)="approve.emit(req.id)"
+                    class="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all"
+                    title="Aprobar"
+                  >
+                    <span class="material-symbols-outlined text-base">check</span>
+                  </button>
+                  <button
+                    (click)="reject.emit(req.id)"
+                    class="p-2 bg-red-100 text-red-400 hover:bg-red-400 hover:text-white rounded-lg transition-all"
+                    title="Rechazar"
+                  >
+                    <span class="material-symbols-outlined text-base">close</span>
+                  </button>
+                } @else {
+                  <button class="text-primary/40 hover:text-primary p-2">
+                    <span class="material-symbols-outlined">more_vert</span>
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        }@empty{
+          <tr>
+            <td colspan="5" class="px-8 py-12 text-center text-primary/40 text-sm">
+              No hay solicitudes registradas.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

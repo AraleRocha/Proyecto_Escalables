@@ -1,0 +1,31 @@
+<div class="w-full max-w-[1200px] mx-auto px-6 py-10">
+  <div class="mb-10 text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-natural-text tracking-tight mb-2">Panel de Gestión</h2>
+    <p class="text-primary/70 text-sm font-medium">Bienvenido al centro de administración de tu refugio.</p>
+  </div>
+  <div class="flex flex-wrap justify-center gap-1 md:gap-2 mb-10 border-b border-primary/10">
+    @for (tab of tabs; track tab.id) {
+      <button
+        (click)="activeTab.set(tab.id)"
+        class="flex items-center gap-2 px-5 py-3 border-b-2 border-transparent text-primary/50 hover:text-primary hover:border-primary/30 transition-all font-medium"
+        [class.border-primary]="activeTab() === tab.id"
+        [class.text-primary]="activeTab() === tab.id"
+        [class.font-bold]="activeTab() === tab.id"
+      >
+        <span class="material-symbols-outlined text-sm">{{ tab.icon }}</span>
+        <span class="text-sm">{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+
+  @if (activeTab() === 'solicitudes') {
+    <app-panel-solicitudes />
+  }
+  @if (activeTab() === 'voluntarios') {
+    <app-panel-voluntarios />
+  }
+  @if (activeTab() === 'gatos') {
+    <app-panel-gatos />
+  }
+
+</div>

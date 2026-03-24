@@ -1,0 +1,82 @@
+<div class="max-w-[1400px] mx-auto px-6 md:px-12 py-12">
+  <div class="mb-8">
+    <a routerLink="/adoptar" class="text-primary hover:text-sage-dark transition-colors flex items-center gap-1 text-sm font-semibold">
+      <span class="material-symbols-outlined text-sm">arrow_back</span>
+      Volver al listado
+    </a>
+  </div>
+  @if (cat(); as c) {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        <div class="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bg-sage-light shadow-sm">
+          <img
+            [src]="c.photo"
+            [alt]="c.name"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+      <div class="lg:col-span-5 flex flex-col gap-8">
+        <div class="bg-white p-8 md:p-10 rounded-3xl border border-primary/5 shadow-sm">
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h2 class="text-4xl font-extrabold text-natural-text mb-2">{{ c.name }}</h2>
+              <div class="flex gap-2">
+                <span class="px-3 py-1 bg-sage-light text-sage-dark text-xs font-bold rounded-full uppercase tracking-wider capitalize">{{ c.gender }}</span>
+                <span class="px-3 py-1 bg-sage-light text-sage-dark text-xs font-bold rounded-full uppercase tracking-wider">{{ c.age }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+              <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Raza</p>
+              <p class="text-sm font-bold">{{ c.breed }}</p>
+            </div>
+            <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+              <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Tamaño</p>
+              <p class="text-sm font-bold capitalize">{{ c.size }}</p>
+            </div>
+            <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+              <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Vacunado</p>
+              <p class="text-sm font-bold">{{ c.isVaccinated ? 'Sí' : 'No' }}</p>
+            </div>
+            <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+              <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Esterilizado</p>
+              <p class="text-sm font-bold">{{ c.isSterilized ? 'Sí' : 'No' }}</p>
+            </div>
+          </div>
+
+          <div class="mb-8">
+            <h4 class="text-xs font-extrabold uppercase tracking-[0.2em] text-primary/60 mb-4">Comportamiento</h4>
+            <div class="flex flex-wrap gap-2">
+              @for (b of c.behavior; track b) {
+                <div class="flex items-center gap-2 px-4 py-2 bg-beige rounded-xl text-sm font-medium capitalize">
+                  {{ b }}
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="mb-10">
+            <h4 class="text-xs font-extrabold uppercase tracking-[0.2em] text-primary/60 mb-4">Historia</h4>
+            <p class="text-natural-text/80 text-sm leading-relaxed">{{ c.story }}</p>
+          </div>
+
+          <button
+            (click)="applyForAdoption()"
+            class="w-full py-5 bg-primary text-white font-bold rounded-2xl hover:bg-sage-dark transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3"
+          >
+            <span class="material-symbols-outlined">assignment_ind</span>
+            Postular para Adopción
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }@else {
+    <div class="text-center py-20 text-primary/50">
+      <span class="material-symbols-outlined text-5xl mb-4 block">search_off</span>
+      <p>Gato no encontrado.</p>
+    </div>
+  }
+</div>

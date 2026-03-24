@@ -1,0 +1,60 @@
+<aside class="w-full lg:w-72 flex-shrink-0">
+  <div class="sticky top-28 bg-beige/50 p-8 rounded-xl border border-primary/5">
+    <div class="flex items-center gap-2 mb-8 border-b border-primary/10 pb-4">
+      <span class="material-symbols-outlined text-primary">tune</span>
+      <h3 class="text-lg font-bold">Filtros Avanzados</h3>
+    </div>
+
+    <div class="mb-10">
+      <h4 class="text-xs uppercase tracking-widest font-extrabold text-primary mb-5">Edad</h4>
+      <div class="space-y-3">
+        @for (opt of ageOptions; track opt.value) {
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              [checked]="ageCategories().includes(opt.value)"
+              (change)="toggleAge(opt.value)"
+              class="rounded border-primary/30 text-primary focus:ring-primary/20 h-4 w-4"
+            />
+            <span class="text-sm font-medium group-hover:text-primary transition-colors">{{ opt.label }}
+              <span class="text-xs text-primary/50 font-normal">({{ opt.range }})</span>
+            </span>
+          </label>
+        }
+      </div>
+    </div>
+
+    <div class="mb-10">
+      <h4 class="text-xs uppercase tracking-widest font-extrabold text-primary mb-5">Sexo</h4>
+      <div class="flex flex-wrap gap-2">
+        @for (g of ['macho', 'hembra']; track g) {
+          <button
+            (click)="setGender(g)"
+            [class.bg-primary]="selectedGender() === g"
+            [class.text-white]="selectedGender() === g"
+            class="px-4 py-2 border border-primary/30 rounded-full text-xs font-bold hover:bg-primary hover:text-white transition-all capitalize"
+          >
+            {{ g | titlecase }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div>
+      <h4 class="text-xs uppercase tracking-widest font-extrabold text-primary mb-5">Comportamiento</h4>
+      <div class="space-y-3">
+        @for (b of behaviorOptions; track b) {
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              [checked]="selectedBehaviors().includes(b)"
+              (change)="toggleBehavior(b)"
+              class="rounded border-primary/30 text-primary focus:ring-primary/20 h-4 w-4"
+            />
+            <span class="text-sm font-medium group-hover:text-primary transition-colors capitalize">{{ b }}</span>
+          </label>
+        }
+      </div>
+    </div>
+  </div>
+</aside>

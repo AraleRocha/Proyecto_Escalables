@@ -1,0 +1,79 @@
+<section class="relative h-[290px] w-full flex items-center justify-center text-center px-6 overflow-hidden">
+  <div class="absolute inset-0" style="background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('https://verdecora.es/blog/wp-content/uploads/2018/03/hierba-para-gatos-beneficios.jpg') center/cover"></div>
+  <div class="relative z-10 max-w-3xl">
+    <h2 class="text-5xl md:text-6xl font-light text-white mb-6 leading-tight italic">Voluntariado</h2>
+  </div>
+</section>
+
+<section class="max-w-[1200px] mx-auto px-6 md:px-12 py-20">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+    <div class="space-y-12">
+      <div>
+        <h3 class="text-3xl font-bold text-natural-text mb-6">Nuestros Roles</h3>
+        <p class="text-primary/80 mb-8 leading-relaxed">
+          No importa cuánto tiempo tengas disponible, siempre hay una manera de ayudar.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        @for (role of roles; track role.title) {
+          <div class="flex gap-5">
+            <div class="flex-shrink-0 w-12 h-12 bg-sage-light rounded-full flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined">{{ role.icon }}</span>
+            </div>
+            <div>
+              <h4 class="text-lg font-bold mb-2">{{ role.title }}</h4>
+              <p class="text-sm text-primary/70">{{ role.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-primary/5 sticky top-32">
+      @if (submitSuccess()) {
+        <div class="text-center py-12">
+          <span class="material-symbols-outlined text-5xl text-primary mb-4 block">check_circle</span>
+          <h3 class="text-xl font-bold mb-2">¡Solicitud enviada!</h3>
+          <p class="text-sm text-primary/70">Nos pondremos en contacto contigo pronto.</p>
+        </div>
+      } @else {
+        <div class="mb-8">
+          <h3 class="text-2xl font-bold mb-2">Inscríbete</h3>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="nombre">Nombre Completo</label>
+            <input formControlName="nombre" id="nombre" type="text" placeholder="Juan Pérez"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="email">Email</label>
+            <input formControlName="email" id="email" type="email" placeholder="juan@ejemplo.com"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="disponibilidad">Disponibilidad</label>
+            <select formControlName="disponibilidad" id="disponibilidad"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm">
+              <option value="manana">Días de semana (Mañana)</option>
+              <option value="tarde">Días de semana (Tarde)</option>
+              <option value="fines_de_semana">Fines de semana</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="mensaje">¿Por qué quieres unirte? (Opcional)</label>
+            <textarea formControlName="mensaje" id="mensaje" rows="4" placeholder="Cuéntanos un poco sobre ti..."
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm resize-none"></textarea>
+          </div>
+          <button type="submit" [disabled]="isSubmitting() || form.invalid"
+            class="w-full py-4 bg-primary text-white font-bold rounded-lg hover:bg-sage-dark transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed">
+            {{ isSubmitting() ? 'Enviando...' : 'Enviar solicitud' }}
+          </button>
+        </form>
+      }
+    </div>
+
+  </div>
+</section>
