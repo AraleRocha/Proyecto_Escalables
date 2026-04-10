@@ -1,0 +1,11 @@
+{
+  "name": "Mariana",
+  "email": "hola@gmail.com",
+  "role": "refugio"
+}
+
+{
+  "name": "Ricardo",
+  "email": "r@gmail.com",
+  "role": "adoptante"
+}
