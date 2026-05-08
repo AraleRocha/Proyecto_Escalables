@@ -22,15 +22,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Nombre completo</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userName }}</div>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.name }}</div>
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Correo electrónico</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userEmail }}</div>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.email }}</div>
         </div>
         <div>
           <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Tipo de cuenta</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ userRole }}</div>
+          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.role }}</div>
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
       </div>
     } @else {
       <div class="space-y-4">
-        @for (sol of solicitudes(); track sol.id) {
+        @for (sol of solicitudes(); track sol._id) {
           <div class="bg-white rounded-2xl border border-primary/5 shadow-sm overflow-hidden flex">
 
             <div class="w-28 h-28 flex-shrink-0 bg-sage-light overflow-hidden">

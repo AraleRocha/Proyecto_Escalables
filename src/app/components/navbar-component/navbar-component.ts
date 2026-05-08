@@ -1,6 +1,7 @@
 import { Component, HostListener, inject, signal, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth-service';
 @Component({
   selector: 'app-navbar-component',
   imports: [RouterLink, RouterLinkActive, CommonModule],
@@ -9,8 +10,11 @@ import { CommonModule } from '@angular/common';
 })
 
 export class NavbarComponent {
-  isScrolled       = signal(false);
+  isScrolled = signal(false);
   isMobileMenuOpen = signal(false);
+  authService = inject(AuthService);
+  isLoggedIn = this.authService.isLoggedIn;
+  isAdmin = this.authService.isAdmin;
  
   navLinks = [
     { label: 'Inicio',       path: '/' },
@@ -22,6 +26,10 @@ export class NavbarComponent {
   @HostListener('window:scroll')
   onScroll() {
     this.isScrolled.set(window.scrollY > 20);
+  }
+
+  logout() {
+    this.authService.logout();
   }
  
   toggleMobileMenu() {

@@ -1,64 +1,54 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { computed, Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { User } from '../interfaces/user';
 
-export type UserRole = 'adoptante' | 'refugio';
+export interface User {
+  _id?: string;
+  name: string;
+  email: string;
+  role: 'refugio' | 'adoptante';
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private currentUser = signal<User | null>(null);
+  private http   = inject(HttpClient);
+  private router = inject(Router);
+  private url    = 'http://localhost:8081/api/auth';
 
-  isLoggedIn = computed(() => this.currentUser() !== null);
-  user        = this.currentUser.asReadonly();
-  isShelter   = computed(() => this.currentUser()?.role === 'refugio');
+  private _token = signal<string | null>(localStorage.getItem('token'));
+  private _user  = signal<User | null>(JSON.parse(localStorage.getItem('user') ?? 'null'));
 
-  constructor(private router: Router) {
-    try {
-      const stored = localStorage.getItem('pc_user');
-      if (stored) this.currentUser.set(JSON.parse(stored));
-    } catch {
-      localStorage.removeItem('pc_user');
-    }
+  isLoggedIn = computed(() => !!this._token());
+  isAdmin  = computed(() => this._user()?.role === 'refugio');
+  user = this._user.asReadonly();
+
+  getToken(): string | null {
+    return this._token();
   }
 
-  login(email: string, password: string): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => { //simula usuario
-        const mockUser: User = {
-          id: 'user-demo',  
-          name: 'Usuario Demo',
-          email,
-          role: 'adoptante',
-        };
-        this._setUser(mockUser);
-        resolve();
-      }, 800);
-    });
+  login(email: string, password: string): Observable<any> {
+    return this.http.post<{ token: string; user: User }>(`${this.url}/login`, { email, password })
+      .pipe(
+        tap(res => {
+          console.log('login:', res); 
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
+          this._token.set(res.token);
+          this._user.set(res.user);
+        })
+      );
   }
 
-  register(name: string, email: string, _password: string, role: UserRole): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newUser: User = {
-          id: Date.now().toString(),
-          name,
-          email,
-          role,
-        };
-        this._setUser(newUser);
-        resolve();
-      }, 800);
-    });
+  register(name: string, email: string, password: string, role: string): Observable<any> {
+    return this.http.post(`${this.url}/register`, { name, email, password, role });
   }
 
   logout(): void {
-    this.currentUser.set(null);
-    localStorage.removeItem('pc_user');
-    this.router.navigate(['/'], { replaceUrl: true });
-  }
-
-  private _setUser(user: User): void {
-    this.currentUser.set(user);
-    localStorage.setItem('pc_user', JSON.stringify(user));
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this._token.set(null);
+    this._user.set(null);
+    this.router.navigate(['/acceso']);
   }
 }

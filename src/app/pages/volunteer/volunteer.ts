@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject,signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { VolunteersService } from '../../services/volunteers-service';  
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-volunteer',
@@ -9,9 +11,24 @@ import { CommonModule } from '@angular/common';
   styleUrl: './volunteer.css',
 })
 export class Volunteer {
-  form: FormGroup;
+  private fb = inject(FormBuilder);
+  private volunteersService = inject(VolunteersService);
+  public authService = inject(AuthService);
+
   isSubmitting = signal(false);
   submitSuccess = signal(false);
+
+  ngOnInit() {
+    const user = this.authService.user();
+    if (user) {
+      this.form.patchValue({
+        nombre: user.name,
+        email:  user.email,
+      });
+      this.form.get('nombre')?.disable();
+      this.form.get('email')?.disable();
+    }
+  }
 
   roles = [
     {
@@ -31,21 +48,31 @@ export class Volunteer {
     },
   ];
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      nombre:         ['', [Validators.required, Validators.minLength(3)]],
-      email:          ['', [Validators.required, Validators.email]],
-      disponibilidad: ['manana', Validators.required],
-      mensaje:        [''],
-    });
-  }
+  form: FormGroup = this.fb.group({
+    nombre: ['', [Validators.required, Validators.minLength(3)]],
+    email: ['', [Validators.required, Validators.email]],
+    disponibilidad: ['manana', Validators.required],
+    mensaje: [''],
+  });
 
-  async onSubmit() {
+  onSubmit() {
     if (this.form.invalid) return;
     this.isSubmitting.set(true);
-    await new Promise(r => setTimeout(r, 1000));
-    this.isSubmitting.set(false);
-    this.submitSuccess.set(true);
-    this.form.reset();
+    const v = this.form.getRawValue();
+    this.volunteersService.submit({
+      fullName: v.nombre,
+      email: v.email,
+      availability: v.disponibilidad,
+      message: v.mensaje,
+    }).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.submitSuccess.set(true);
+        this.form.reset();
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+      }
+    });
   }
 }

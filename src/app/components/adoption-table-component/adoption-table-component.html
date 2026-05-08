@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-primary/5">
-        @for (req of requests; track req.id) {
+        @for (req of requests; track req._id) {
           <tr class="hover:bg-crema/50 transition-colors">
             <td class="px-8 py-5">
               <div class="flex items-center gap-3">
@@ -47,14 +47,14 @@
               <div class="flex justify-end gap-2">
                 @if (req.status === 'pendiente') {
                   <button
-                    (click)="approve.emit(req.id)"
+                    (click)="approve.emit(req._id)"
                     class="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all"
                     title="Aprobar"
                   >
                     <span class="material-symbols-outlined text-base">check</span>
                   </button>
                   <button
-                    (click)="reject.emit(req.id)"
+                    (click)="reject.emit(req._id)"
                     class="p-2 bg-red-100 text-red-400 hover:bg-red-400 hover:text-white rounded-lg transition-all"
                     title="Rechazar"
                   >

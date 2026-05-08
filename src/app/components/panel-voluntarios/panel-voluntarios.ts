@@ -1,33 +1,50 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VolunteersService } from '../../services/volunteers-service';
+import { VolunteersService, VolunteerWithId } from '../../services/volunteers-service';
+import { VolunteerApplication } from '../../interfaces/volunteer-application';
 @Component({
   selector: 'app-panel-voluntarios',
   imports: [CommonModule],
   templateUrl: './panel-voluntarios.html',
   styleUrl: './panel-voluntarios.css',
 })
-export class PanelVoluntarios {
+export class PanelVoluntarios implements OnInit {
   private volunteersService = inject(VolunteersService);
  
-  statuses: Record<string, 'pendiente' | 'aceptado' | 'rechazado'> = {};
+  applications = signal<VolunteerApplication[]>([]);
  
-  get applications() {
-    return this.volunteersService.getAll();
+  ngOnInit() {
+    this.load();
   }
  
-  approve(id: string) { this.statuses[id] = 'aceptado'; }
-  reject(id: string)  { this.statuses[id] = 'rechazado'; }
+  load() {
+    this.volunteersService.getAll().subscribe({
+      next: (data) => {
+        console.log('Voluntarios:', data);  
+        this.applications.set(data);
+      },
+      error: (err) => console.error('Error:', err)
+    });
+  }
  
-  getStatus(id: string): 'pendiente' | 'aceptado' | 'rechazado' {
-    return this.statuses[id] ?? 'pendiente';
+  approve(id: string) {
+    this.volunteersService.updateStatus(id, 'aceptado').subscribe(() => this.load());
+  }
+ 
+  reject(id: string) {
+    this.volunteersService.updateStatus(id, 'rechazado').subscribe(() => this.load());
+  }
+ 
+  getStatus(app: VolunteerApplication): string {
+    return app.status ?? 'pendiente';
   }
  
   availabilityLabel(val: string): string {
     const map: Record<string, string> = {
-      manana:          'Días de semana (Mañana)',
-      tarde:           'Días de semana (Tarde)',
+      manana: 'Días de semana (Mañana)',
+      tarde: 'Días de semana (Tarde)',
       fines_de_semana: 'Fines de semana',
+      ocasional: 'Eventos ocasionales',
     };
     return map[val] ?? val;
   }

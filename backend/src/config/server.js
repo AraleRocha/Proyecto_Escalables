@@ -7,6 +7,7 @@ const adoptionRoutes = require('../routes/adoption.routes');
 const volunteerRoutes = require('../routes/volunteer.routes');
 const userRoutes = require('../routes/user.routes');
 const donationRoutes = require('../routes/donation.routes');
+const authRoutes = require('../routes/auth.routes');
 
 class Server {
   constructor() {
@@ -29,6 +30,7 @@ class Server {
     this.app.use('/api/volunteers', volunteerRoutes);
     this.app.use('/api/users', userRoutes);
     this.app.use('/api/donations', donationRoutes);
+    this.app.use('/api/auth', authRoutes);
   }
 
   listen() {

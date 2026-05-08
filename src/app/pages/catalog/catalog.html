@@ -5,17 +5,6 @@
 
     <section class="flex-1">
       <div class="flex items-center justify-end mb-10 border-b border-primary/10 pb-4">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-primary uppercase tracking-widest">Ordenar por:</span>
-          <select
-            (change)="onSortChanged($event)"
-            class="border-none bg-transparent text-sm font-bold text-natural-text focus:ring-0 cursor-pointer"
-          >
-            <option value="recientes">Más recientes</option>
-            <option value="edad_asc">Edad (Menor a Mayor)</option>
-            <option value="edad_desc">Edad (Mayor a Menor)</option>
-          </select>
-        </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         @for (cat of cats(); track cat.id) {

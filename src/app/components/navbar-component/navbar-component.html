@@ -1,4 +1,3 @@
-<!-- src/app/core/components/navbar/navbar.component.html -->
 <header
   class="sticky top-0 z-50 w-full border-b border-primary/10 bg-crema/90 backdrop-blur-md px-6 md:px-12 py-4 transition-shadow"
   [class.shadow-sm]="isScrolled()"
@@ -23,30 +22,53 @@
         }
       </nav>
     </div>
-    <div class="flex items-center gap-4">
-      <a routerLink="/panel"
-        class="px-5 py-2 text-sm font-semibold text-natural-text hover:text-primary transition-colors">
-        Panel
-      </a>
-      <a routerLink="/perfil"
-        class="px-5 py-2 bg-primary text-white text-sm font-bold rounded-full hover:bg-sage-dark transition-all shadow-sm">
-        Mi Cuenta
-      </a>
 
-      <button
-        (click)="toggleMobileMenu()"
-        class="lg:hidden p-2 text-primary hover:bg-sage-light rounded-full transition-colors"
-        aria-label="Abrir menú"
-      >
-        <span class="material-symbols-outlined">
-          {{ isMobileMenuOpen() ? 'close' : 'menu' }}
-        </span>
-      </button>
+    <div class="hidden lg:flex items-center gap-3">
+      @if (!isLoggedIn()) {
+        <a routerLink="/login"
+          class="px-5 py-2 text-sm font-semibold text-natural-text hover:text-primary transition-colors">
+          Iniciar Sesión
+        </a>
+        <a routerLink="/login" [queryParams]="{ mode: 'register' }"
+          class="px-5 py-2 bg-primary text-white text-sm font-bold rounded-full hover:bg-sage-dark transition-all shadow-sm">
+          Registrarse
+        </a>
+      }
+      @if (isLoggedIn()) {
+        @if (isAdmin()) {
+          <a routerLink="/panel"
+            class="px-5 py-2 text-sm font-semibold text-natural-text hover:text-primary transition-colors">
+            Panel
+          </a>
+        }
+        <a routerLink="/perfil"
+          class="px-5 py-2 text-sm font-semibold text-natural-text hover:text-primary transition-colors">
+          Mi Cuenta
+        </a>
+        <button
+          (click)="logout()"
+          class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-accent-red rounded-full hover:opacity-90 transition-all shadow-sm"
+        >
+          <span class="material-symbols-outlined text-base">logout</span>
+          Salir
+        </button>
+      }
     </div>
+
+    
+    <button
+      (click)="toggleMobileMenu()"
+      class="lg:hidden p-2 text-primary hover:bg-sage-light rounded-full transition-colors"
+      aria-label="Abrir menú"
+    >
+      <span class="material-symbols-outlined">
+        {{ isMobileMenuOpen() ? 'close' : 'menu' }}
+      </span>
+    </button>
 
   </div>
 
-  <!-- Menu para movil -->
+  <!-- Menú móvil -->
   @if (isMobileMenuOpen()) {
     <nav class="lg:hidden mt-4 pb-4 border-t border-primary/10 pt-4 flex flex-col gap-4">
       @for (link of navLinks; track link.path) {
@@ -59,14 +81,37 @@
           {{ link.label }}
         </a>
       }
-      <a routerLink="/panel" (click)="toggleMobileMenu()"
-        class="text-sm font-medium hover:text-primary transition-colors px-2">
-        Panel
-      </a>
-      <a routerLink="/perfil" (click)="toggleMobileMenu()"
-        class="text-sm font-bold text-primary px-2">
-        Mi Cuenta
-      </a>
+
+      <div class="border-t border-primary/10 pt-3 flex flex-col gap-3">
+        @if (!isLoggedIn()) {
+          <a routerLink="/login" (click)="toggleMobileMenu()"
+            class="text-sm font-semibold text-natural-text hover:text-primary transition-colors px-2">
+            Iniciar Sesión
+          </a>
+          <a routerLink="/login" [queryParams]="{ mode: 'register' }" (click)="toggleMobileMenu()"
+            class="text-sm font-bold text-primary px-2">
+            Registrarse
+          </a>
+        }
+        @if (isLoggedIn()) {
+          @if (isAdmin()) {
+            <a routerLink="/panel" (click)="toggleMobileMenu()"
+              class="text-sm font-medium hover:text-primary transition-colors px-2">
+              Panel
+            </a>
+          }
+          <a routerLink="/perfil" (click)="toggleMobileMenu()"
+            class="text-sm font-semibold text-natural-text hover:text-primary transition-colors px-2">
+            Mi Cuenta
+          </a>
+          <button (click)="logout()"
+            class="flex items-center gap-1.5 text-sm font-semibold text-white bg-accent-red px-4 py-2 rounded-full w-fit">
+            <span class="material-symbols-outlined text-base">logout</span>
+            Salir
+          </button>
+        }
+      </div>
     </nav>
   }
+
 </header>

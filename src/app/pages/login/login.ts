@@ -13,10 +13,10 @@ export type UserRole = 'adoptante' | 'refugio';
   styleUrl: './login.css',
 })
 export class Login  implements OnInit{
-  private fb     = inject(FormBuilder);
-  private auth   = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
   private router = inject(Router);
-  private route  = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
 
   mode = signal<'login' | 'register'>('login');
   selectedRole = signal<UserRole>('adoptante');
@@ -46,32 +46,48 @@ export class Login  implements OnInit{
 
   setMode(m: 'login' | 'register') { this.mode.set(m); this.errorMessage.set(''); }
 
-  async onLogin() {
+  onLogin() {
     if (this.loginForm.invalid) return;
     this.isSubmitting.set(true);
     this.errorMessage.set('');
-    try {
-      await this.auth.login(this.loginForm.value.email, this.loginForm.value.password);
-      this.router.navigate(['/']);
-    } catch {
-      this.errorMessage.set('Credenciales incorrectas. Intenta de nuevo.');
-    } finally {
-      this.isSubmitting.set(false);
-    }
+
+    this.auth.login(
+      this.loginForm.value.email,
+      this.loginForm.value.password
+    ).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        // Si era refugio va al panel, si era adoptante va al inicio
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/';
+        this.router.navigate([returnUrl]);
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+        this.errorMessage.set('Credenciales incorrectas. Intenta de nuevo.');
+      }
+    });
   }
 
-  async onRegister() {
+  onRegister() {
     if (this.registerForm.invalid) return;
     this.isSubmitting.set(true);
     this.errorMessage.set('');
-    try {
-      const { name, email, password } = this.registerForm.value;
-      await this.auth.register(name, email, password, this.selectedRole());
-      this.router.navigate(['/']);
-    } catch {
-      this.errorMessage.set('Error al crear la cuenta. Intenta de nuevo.');
-    } finally {
-      this.isSubmitting.set(false);
-    }
+
+    const { name, email, password } = this.registerForm.value;
+
+    this.auth.register(name, email, password, this.selectedRole()).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        // Después de registrar, ir al login
+        this.setMode('login');
+        this.errorMessage.set(''); // limpiar
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        this.errorMessage.set(
+          err.error?.msg || 'Error al crear la cuenta. Intenta de nuevo.'
+        );
+      }
+    });
   }
 }

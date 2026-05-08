@@ -1,5 +1,5 @@
 export interface AdoptionRequest {
-  id: string;
+  _id?: string;
   catId: string;
   catName: string;
   catPhoto?: string;       

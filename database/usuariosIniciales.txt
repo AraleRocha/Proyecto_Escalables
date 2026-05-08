@@ -1,11 +1,13 @@
 {
   "name": "Mariana",
   "email": "hola@gmail.com",
+  "password": "123",
   "role": "refugio"
 }
 
 {
   "name": "Ricardo",
   "email": "r@gmail.com",
+  "password": "321",
   "role": "adoptante"
 }

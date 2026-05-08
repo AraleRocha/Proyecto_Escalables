@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,15 +13,17 @@ export type CatBehavior = 'tranquilo' | 'activo' | 'cariñoso' | 'independiente'
   templateUrl: './panel-gatos.html',
   styleUrl: './panel-gatos.css',
 })
-export class PanelGatos {
+export class PanelGatos implements OnInit {
   private catsService = inject(CatService);
   private fb = inject(FormBuilder);
  
   showForm = signal(false);
   isSubmitting = signal(false);
  
-  get cats(): Cat[] {
-    return this.catsService.getAll();
+  cats = signal<Cat[]>([]);
+
+  ngOnInit() {
+    this.catsService.getAll().subscribe(data => this.cats.set(data));
   }
  
  
@@ -29,17 +31,17 @@ export class PanelGatos {
   selectedBehaviors = signal<CatBehavior[]>([]);
  
   form: FormGroup = this.fb.group({
-    name:        ['', [Validators.required, Validators.minLength(2)]],
-    age:         ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    age: ['', Validators.required],
     ageCategory: ['adulto', Validators.required],
-    gender:      ['macho', Validators.required],
-    breed:       ['', Validators.required],
-    size:        ['mediano', Validators.required],
-    story:       ['', [Validators.required, Validators.minLength(20)]],
-    photoUrl:    ['', Validators.required],
-    isVaccinated:  [false],
-    isSterilized:  [false],
-    isDewormed:    [false],
+    gender: ['macho', Validators.required],
+    breed: ['', Validators.required],
+    size: ['mediano', Validators.required],
+    story: ['', [Validators.required, Validators.minLength(20)]],
+    photoUrl: ['', Validators.required],
+    isVaccinated: [false],
+    isSterilized: [false],
+    isDewormed: [false],
   });
  
   toggleBehavior(b: CatBehavior) {
@@ -50,30 +52,29 @@ export class PanelGatos {
   }
  
   async onSubmit() {
-    if (this.form.invalid || this.selectedBehaviors().length === 0) return;
-    this.isSubmitting.set(true);
- 
-    await new Promise(r => setTimeout(r, 800));
- 
-    const v = this.form.value;
-    this.catsService.add({
-      name:          v.name,
-      age:           v.age,
-      ageCategory:   v.ageCategory,
-      gender:        v.gender,
-      breed:         v.breed,
-      size:          v.size,
-      story:         v.story,
-      photo:        v.photoUrl,
-      behavior:      this.selectedBehaviors(),
-      isVaccinated:  v.isVaccinated,
-      isSterilized:  v.isSterilized,
-      status:        'disponible',
-    });
- 
+  if (this.form.invalid || this.selectedBehaviors().length === 0) return;
+  this.isSubmitting.set(true);
+
+  const v = this.form.value;
+  this.catsService.add({
+    name:         v.name,
+    age:          v.age,
+    ageCategory:  v.ageCategory,
+    gender:       v.gender,
+    breed:        v.breed,
+    size:         v.size,
+    story:        v.story,
+    photo:        v.photoUrl,
+    behavior:     this.selectedBehaviors(),
+    isVaccinated: v.isVaccinated,
+    isSterilized: v.isSterilized,
+    status:       'disponible',
+  }).subscribe(() => {                          // ← agregar subscribe
+    this.catsService.getAll().subscribe(data => this.cats.set(data)); // recargar lista
     this.form.reset({ ageCategory: 'adulto', gender: 'macho', size: 'mediano', breed: 'Común Europeo' });
     this.selectedBehaviors.set([]);
     this.isSubmitting.set(false);
     this.showForm.set(false);
-  }
+  });
+}
 }

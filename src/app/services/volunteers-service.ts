@@ -1,34 +1,26 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { VolunteerApplication } from '../interfaces/volunteer-application';
+
+export type VolunteerWithId = VolunteerApplication & { id: string; status: string; createdAt: Date };
 
 @Injectable({
   providedIn: 'root',
 })
 export class VolunteersService {
-  private applications = signal<(VolunteerApplication & { id: string; createdAt: Date })[]>([
-    {
-      id: '1',
-      fullName: 'Ana García López',
-      email: 'ana.garcia@correo.com',
-      availability: 'fines_de_semana',
-      message: 'Me encanta los animales y tengo experiencia cuidando gatos rescatados en mi colonia.',
-      createdAt: new Date('2024-10-15'),
-    },
-  ]);
+  private http = inject(HttpClient);
+  private url = 'http://localhost:8081/api/volunteers';
 
-  getAll() {
-    return this.applications();
+  getAll(): Observable<VolunteerWithId[]> {
+    return this.http.get<VolunteerWithId[]>(this.url);
   }
-
-  submit(application: VolunteerApplication): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.applications.update(list => [
-          ...list,
-          { ...application, id: Date.now().toString(), createdAt: new Date() },
-        ]);
-        resolve();
-      }, 1000);
-    });
+ 
+  submit(application: VolunteerApplication): Observable<VolunteerWithId> {
+    return this.http.post<VolunteerWithId>(this.url, application);
+  }
+ 
+  updateStatus(id: string, status: 'aceptado' | 'rechazado'): Observable<VolunteerWithId> {
+    return this.http.put<VolunteerWithId>(`${this.url}/${id}`, { status });
   }
 }

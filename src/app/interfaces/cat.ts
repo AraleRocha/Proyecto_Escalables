@@ -1,5 +1,6 @@
 export interface Cat {
-  id: string;
+  _id?: string;
+  id?: string;
   name: string;
   age: string;
   ageCategory: 'cachorro' | 'adulto' | 'senior';

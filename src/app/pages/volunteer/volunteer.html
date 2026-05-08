@@ -46,12 +46,14 @@
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="nombre">Nombre Completo</label>
             <input formControlName="nombre" id="nombre" type="text" placeholder="Juan Pérez"
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" 
+              [class.cursor-not-allowed]="authService.isLoggedIn()"/>
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="email">Email</label>
             <input formControlName="email" id="email" type="email" placeholder="juan@ejemplo.com"
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" />
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" 
+              [class.cursor-not-allowed]="authService.isLoggedIn()"/>
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="disponibilidad">Disponibilidad</label>

@@ -2,7 +2,7 @@
   <div class="mb-8">
     <a routerLink="/adoptar" class="text-primary hover:text-sage-dark transition-colors flex items-center gap-1 text-sm font-semibold">
       <span class="material-symbols-outlined text-sm">arrow_back</span>
-      Volver al listado
+      Volver 
     </a>
   </div>
   @if (cat(); as c) {
@@ -50,25 +50,42 @@
             <h4 class="text-xs font-extrabold uppercase tracking-[0.2em] text-primary/60 mb-4">Comportamiento</h4>
             <div class="flex flex-wrap gap-2">
               @for (b of c.behavior; track b) {
-                <div class="flex items-center gap-2 px-4 py-2 bg-beige rounded-xl text-sm font-medium capitalize">
+                <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-sm font-medium capitalize">
                   {{ b }}
                 </div>
               }
             </div>
           </div>
 
-          <div class="mb-10">
-            <h4 class="text-xs font-extrabold uppercase tracking-[0.2em] text-primary/60 mb-4">Historia</h4>
-            <p class="text-natural-text/80 text-sm leading-relaxed">{{ c.story }}</p>
-          </div>
+          @if (isShelter()) {
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+                <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-2">Estado</p>
+                <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                  {{ cat()?.status }}
+                </span>
+              </div>
+              <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+                <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-2">Solicitudes</p>
+                <p class="text-2xl font-extrabold text-natural-text">{{ catRequests().length }}</p>
+              </div>
+            </div>
 
+          } @else if (authService.isLoggedIn()) {
           <button
             (click)="applyForAdoption()"
             class="w-full py-5 bg-primary text-white font-bold rounded-2xl hover:bg-sage-dark transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3"
           >
             <span class="material-symbols-outlined">assignment_ind</span>
-            Postular para Adopción
+            Postular para adopción
           </button>
+          } @else {
+            <a routerLink="/login"
+              class="w-full py-5 bg-primary/10 text-primary font-bold rounded-2xl hover:bg-primary/20 transition-all flex items-center justify-center gap-3">
+              <span class="material-symbols-outlined">login</span>
+              Inicia sesión para adoptar
+            </a>
+          }
         </div>
 
       </div>
@@ -80,3 +97,48 @@
     </div>
   }
 </div>
+
+@if (modalOpen()) {
+  <div class="fixed inset-0 bg-natural-text/20 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
+      <div class="px-8 pt-8 pb-6 text-center">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
+          [class.bg-sage-light]="!modalError()"
+          [class.bg-red-50]="modalError()"
+        >
+          <span class="material-symbols-outlined text-3xl"
+            [class.text-primary]="!modalError()"
+            [class.text-red-400]="modalError()"
+          >
+            {{ modalError() ? 'error' : 'check_circle' }}
+          </span>
+        </div>
+        <h3 class="text-xl font-extrabold text-natural-text mb-2">
+          {{ modalError() ? 'Algo salió mal' : '¡Solicitud enviada!' }}
+        </h3>
+        <p class="text-sm text-primary/60 leading-relaxed">
+          {{ modalMessage() }}
+        </p>
+      </div>
+      <div class="border-t border-primary/5 mx-8"></div>
+      <div class="px-8 py-6 flex flex-col gap-3">
+        @if (!modalError()) {
+          <a routerLink="/perfil" [queryParams]="{ tab: 'solicitudes' }"
+            (click)="modalOpen.set(false)"
+            class="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl text-center hover:bg-sage-dark transition-all">
+            Ver mis solicitudes
+          </a>
+          <button (click)="modalOpen.set(false)"
+            class="w-full py-3 bg-sage-light text-primary text-sm font-bold rounded-xl hover:bg-primary/10 transition-all">
+            Seguir explorando
+          </button>
+        } @else {
+          <button (click)="modalOpen.set(false)"
+            class="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-sage-dark transition-all">
+            Entendido
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}
