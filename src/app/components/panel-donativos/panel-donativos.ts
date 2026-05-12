@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DonationsService, DonationRecord } from '../../services/donations-service';
+import { DonationsService, Donation } from '../../services/donations-service';
 
 @Component({
   selector: 'app-panel-donativos',
@@ -12,7 +12,7 @@ export class PanelDonativos implements OnInit {
 
   private donationsService = inject(DonationsService);
 
-  donaciones = signal<DonationRecord[]>([]);
+  donaciones = signal<Donation[]>([]);
   loading = signal(false);
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class PanelDonativos implements OnInit {
     }).format(new Date(date));
   }
 
-  getUserName(userId: DonationRecord['userId']): string {
+  getUserName(userId: Donation['userId']): string {
     if (typeof userId === 'object' && userId) {
       return userId.name;
     }
@@ -52,7 +52,7 @@ export class PanelDonativos implements OnInit {
     return '';
   }
 
-  getUserEmail(userId: DonationRecord['userId']): string {
+  getUserEmail(userId: Donation['userId']): string {
     if (typeof userId === 'object' && userId) {
       return userId.email;
     }

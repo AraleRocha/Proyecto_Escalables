@@ -31,13 +31,13 @@
 
             <td class="px-8 py-5">
               <div class="font-bold text-sm">
-                {{ getUserName(don.userId) }}
+                {{ getUserName(don.userId) || 'Donador anónimo' }}
               </div>
             </td>
 
             <td class="px-8 py-5">
               <div class="text-sm text-primary/70">
-                {{ getUserEmail(don.userId) }}
+                {{ getUserEmail(don.userId) || 'Sin correo' }}
               </div>
             </td>
 

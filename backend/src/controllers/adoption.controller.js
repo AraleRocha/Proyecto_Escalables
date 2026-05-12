@@ -49,9 +49,17 @@ const updateStatus = async (req, res) => {
     );
     if (!adoption) return res.status(404).json({ error: 'Solicitud no encontrada' });
 
-    // Si se aprueba, actualizar el estado del gato a adoptado
+    // Si se aprueba, actualizar el estado del gato a adoptado y se rechazan automaticamente las demas solicitudes
     if (status === 'aceptada') {
       await Cat.findByIdAndUpdate(adoption.catId, { status: 'adoptado' });
+      await Adoption.updateMany(
+        {
+          catId: adoption.catId,
+          _id: { $ne: adoption._id },
+          status: { $ne: 'rechazada' }
+        },
+        { status: 'rechazada' }
+      );
     }
 
     // Si se rechaza y el gato estaba en proceso, regresarlo a disponible

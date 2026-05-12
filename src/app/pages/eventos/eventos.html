@@ -1,5 +1,5 @@
 <section class="relative h-[290px] w-full flex items-center justify-center text-center px-6 overflow-hidden">
-  <div class="absolute inset-0" style="background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('https://www.freepik.es/fotos-vectores-gratis/variedad-gatos/7') center/cover"></div>
+  <div class="absolute inset-0" style="background: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url('https://img.magnific.com/fotos-premium/gatos-juntos-diez-gatos-domesticos-sentados-fila-fondo-blanco-estudio_817921-68655.jpg') center/cover"></div>
   <div class="relative z-10">
     <h2 class="text-5xl md:text-6xl font-light text-white italic">Eventos</h2>
     <p class="text-white/80 mt-3 text-lg font-light">Actividades gratuitas para la comunidad</p>
@@ -7,7 +7,6 @@
 </section>
 
 <section class="max-w-[1200px] mx-auto px-6 md:px-12 py-16">
-
   @if (loading()) {
     <div class="text-center py-20 text-primary/40">
       <span class="material-symbols-outlined text-5xl mb-3 block animate-spin">progress_activity</span>
@@ -22,8 +21,6 @@
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
       @for (event of events(); track event._id) {
         <div class="bg-white rounded-2xl border border-primary/5 shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
-
-          <!-- Imagen -->
           <div class="relative h-48 bg-sage-light overflow-hidden">
             @if (event.imageUrl) {
               <img [src]="event.imageUrl" [alt]="event.title"
@@ -35,9 +32,19 @@
             }
           </div>
 
-          <!-- Info -->
           <div class="p-6">
-            <h3 class="font-extrabold text-natural-text text-lg mb-2 line-clamp-1">{{ event.title }}</h3>
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <h3 class="font-extrabold text-natural-text text-lg line-clamp-1">{{ event.title }}</h3>
+              <button
+                type="button"
+                (click)="openDeleteModal(event._id!)"
+                class="w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                title="Eliminar evento"
+              >
+                <span class="material-symbols-outlined text-sm">delete</span>
+              </button>
+            </div>
+
             <p class="text-sm text-primary/60 mb-4 line-clamp-2">{{ event.description }}</p>
 
             <div class="space-y-2">
@@ -55,10 +62,43 @@
               </div>
             </div>
           </div>
-
         </div>
       }
     </div>
   }
+  @if (deleteModalOpen()) {
+  <div class="fixed inset-0 bg-natural-text/20 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
+      <div class="px-8 pt-8 pb-6 text-center">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-red-50">
+          <span class="material-symbols-outlined text-3xl text-red-400">delete_forever</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-natural-text mb-2">¿Eliminar evento?</h3>
+        <p class="text-sm text-primary/60 leading-relaxed">
+          Esta acción eliminará el evento permanentemente y no se podrá deshacer.
+        </p>
+      </div>
 
+      <div class="border-t border-primary/5 mx-8"></div>
+
+      <div class="px-8 py-6 flex flex-col gap-3">
+        <button
+          (click)="deleteEvent()"
+          [disabled]="deletingEvent()"
+          class="w-full py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60"
+        >
+          {{ deletingEvent() ? 'Eliminando...' : 'Sí, eliminar evento' }}
+        </button>
+
+        <button
+          (click)="deleteModalOpen.set(false)"
+          class="w-full py-3 bg-sage-light text-primary text-sm font-bold rounded-xl hover:bg-primary/10 transition-all"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}
 </section>
+

@@ -26,8 +26,7 @@ const getByUser = async (req, res) => {
   try {
     const donations = await Donation.find({userId: req.params.userId
     })
-    .populate('userId', 'name email')
-    .sort({ createdAt: -1 });
+    .populate('userId', 'name email').sort({ createdAt: -1 });
     res.json(donations);
   } catch (error) {
     res.status(500).json({

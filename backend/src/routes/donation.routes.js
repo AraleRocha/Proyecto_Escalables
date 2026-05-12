@@ -5,8 +5,8 @@ const { verifyAdminRole } = require('../middleware/verifyAdminRole');
 
 const router = Router();
 
-router.get('/user/:userId', [verifyJWT], getByUser);
-router.get('/', [verifyJWT, verifyAdminRole], getAll);
+router.get('/user/:userId', getByUser);
+router.get('/', getAll);
 router.post('/', create);
 
 module.exports = router;

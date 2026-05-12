@@ -7,6 +7,6 @@ const router = Router();
 router.post('/login', login);
 router.post('/register', register);
 router.put('/update/:id', [verifyJWT], update);
-router.delete('/delete:id', [verifyJWT], remove);
+router.delete('/delete/:id', [verifyJWT], remove);
 
 module.exports = router;

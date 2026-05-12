@@ -20,7 +20,7 @@
       Ver todos <span class="material-symbols-outlined text-sm">arrow_forward</span>
     </a>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-8">
     @for (cat of featuredCats(); track cat._id) {
       <app-cat-card-component [cat]="cat" />
     }

@@ -11,19 +11,19 @@ import { Event } from '../../interfaces/event';
 })
 export class PanelEventos implements OnInit {
   private eventsService = inject(EventsService);
-  private fb            = inject(FormBuilder);
+  private fb = inject(FormBuilder);
 
-  events      = signal<Event[]>([]);
-  showForm    = signal(false);
+  events = signal<Event[]>([]);
+  showForm = signal(false);
   isSubmitting = signal(false);
-  editingId   = signal<string | null>(null); // null = crear, string = editar
+  editingId = signal<string | null>(null); 
 
   form: FormGroup = this.fb.group({
-    title:       ['', [Validators.required, Validators.minLength(3)]],
+    title: ['', [Validators.required, Validators.minLength(3)]],
     description: ['', [Validators.required, Validators.minLength(10)]],
-    date:        ['', Validators.required],
-    location:    ['', Validators.required],
-    imageUrl:    [''],
+    date: ['', Validators.required],
+    location: ['', Validators.required],
+    imageUrl: [''],
   });
 
   ngOnInit() {
@@ -41,7 +41,6 @@ export class PanelEventos implements OnInit {
 
   openEdit(event: Event) {
     this.editingId.set(event._id!);
-    // Formatear la fecha para el input datetime-local
     const d = new Date(event.date);
     const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
       .toISOString().slice(0, 16);

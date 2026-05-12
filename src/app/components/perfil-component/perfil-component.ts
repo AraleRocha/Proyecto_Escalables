@@ -7,7 +7,7 @@ import { AdoptionRequest } from '../../interfaces/adoption-request';
 import { AuthService } from '../../services/auth-service';
 import { VolunteerApplication } from '../../interfaces/volunteer-application';
 import { VolunteersService } from '../../services/volunteers-service';
-import { DonationsService, DonationRecord } from '../../services/donations-service';
+import { DonationsService, Donation } from '../../services/donations-service';
 
 type PerfilTab = 'info' | 'solicitudes' | 'voluntariado' | 'donaciones';
 
@@ -48,16 +48,16 @@ export class PerfilComponent implements OnInit {
   deleteModalOpen = signal(false);
   deletingAccount = signal(false);
 
-  user          = this.authService.user;
-  solicitudes   = signal<AdoptionRequest[]>([]);
+  user = this.authService.user;
+  solicitudes = signal<AdoptionRequest[]>([]);
   voluntariados = signal<VolunteerApplication[]>([]);
-  donaciones    = signal<DonationRecord[]>([]);
-  isEditing     = signal(false);
-  isSaving      = signal(false);
+  donaciones = signal<Donation[]>([]);
+  isEditing = signal(false);
+  isSaving = signal(false);
 
   editForm: FormGroup = this.fb.group({
-    name:     ['', [Validators.required, Validators.minLength(3)]],
-    email:    ['', [Validators.required, Validators.email]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.minLength(6)],
   });
 
