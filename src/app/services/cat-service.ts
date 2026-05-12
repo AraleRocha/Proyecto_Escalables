@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from './auth-service';
 import { Cat } from '../interfaces/cat';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export type CatBehavior = 'tranquilo' | 'activo' | 'cariñoso' | 'independiente' | 'sociable';
@@ -16,7 +17,14 @@ export interface CatFilters {
 })
 export class CatService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private url = 'http://localhost:8081/api/cats';
+
+  private headers(): HttpHeaders {
+    return new HttpHeaders({
+      'Authorization': this.authService.getToken() ?? ''
+    });
+  }
 
   getAll(filters?: CatFilters): Observable<Cat[]> {
     const params: any = {};
@@ -42,7 +50,11 @@ export class CatService {
     return this.http.get<Cat[]>(this.url);
   }
 
-  add(data: Omit<Cat, 'id' | 'createdAt'>): Observable<Cat> {
-    return this.http.post<Cat>(this.url, data);
+  create(data: Omit<Cat, 'id' | 'createdAt'>): Observable<Cat> {
+    return this.http.post<Cat>(this.url, data, { headers: this.headers() });
+  }
+
+  remove(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`, { headers: this.headers() });
   }
 }

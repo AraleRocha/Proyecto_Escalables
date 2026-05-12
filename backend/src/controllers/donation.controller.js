@@ -2,10 +2,13 @@ const Donation = require('../models/donation.model');
 
 const getAll = async (req, res) => {
   try {
-    const donations = await Donation.find();
+    const donations = await Donation.find().populate('userId', 'name email').sort({ createdAt: -1 });
     res.json(donations);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las donaciones' });
+    console.log(error);
+    res.status(500).json({
+      error: 'Error al obtener las donaciones'
+    });
   }
 };
 
@@ -19,4 +22,18 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = { getAll, create };
+const getByUser = async (req, res) => {
+  try {
+    const donations = await Donation.find({userId: req.params.userId
+    })
+    .populate('userId', 'name email')
+    .sort({ createdAt: -1 });
+    res.json(donations);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Error al obtener donaciones'
+    });
+  }
+};
+
+module.exports = { getAll, create, getByUser };

@@ -55,20 +55,6 @@
       }
 
       @if (mode() === 'register') {
-        <div class="grid grid-cols-4 gap-3 mb-6">
-          @for (role of roles; track role.value) {
-            <label class="cursor-pointer">
-              <input type="radio" name="role" [value]="role.value" class="peer hidden"
-                [checked]="selectedRole() === role.value"
-                (change)="selectedRole.set(role.value)" />
-              <div class="flex flex-col items-center p-3 rounded-xl border border-primary/10 bg-crema peer-checked:bg-sage-light peer-checked:border-primary transition-all text-center">
-                <span class="material-symbols-outlined text-primary mb-1">{{ role.icon }}</span>
-                <span class="text-[10px] font-bold uppercase text-primary/70">{{ role.label }}</span>
-              </div>
-            </label>
-          }
-        </div>
-
         <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="space-y-5">
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2">Nombre</label>

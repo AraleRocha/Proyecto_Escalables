@@ -45,5 +45,10 @@ export const routes: Routes = [
       import('./pages/admin-panel/admin-panel').then(m => m.AdminPanel),
     canActivate: [authGuard],
   },
+  { 
+    path: 'eventos', 
+    loadComponent: () => 
+      import('./pages/eventos/eventos').then(m => m.Eventos) 
+  },
   { path: '**', redirectTo: '' },
 ];

@@ -72,13 +72,17 @@
             </div>
 
           } @else if (authService.isLoggedIn()) {
-          <button
-            (click)="applyForAdoption()"
-            class="w-full py-5 bg-primary text-white font-bold rounded-2xl hover:bg-sage-dark transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3"
-          >
-            <span class="material-symbols-outlined">assignment_ind</span>
-            Postular para adopción
-          </button>
+            @if (alreadyApplied()) {
+              <div class="w-full py-5 bg-yellow-50 text-yellow-700 font-bold rounded-2xl flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined">check_circle</span>
+                Ya enviaste una solicitud
+              </div>
+            } @else {
+              <button (click)="applyForAdoption()" class="w-full py-5 bg-primary text-white font-bold rounded-2xl hover:bg-sage-dark transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3">
+                <span class="material-symbols-outlined">assignment_ind</span>
+                Postular para adopción
+              </button>
+            }
           } @else {
             <a routerLink="/login"
               class="w-full py-5 bg-primary/10 text-primary font-bold rounded-2xl hover:bg-primary/20 transition-all flex items-center justify-center gap-3">

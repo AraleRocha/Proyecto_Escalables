@@ -1,5 +1,5 @@
 import { computed, Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -12,9 +12,9 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http   = inject(HttpClient);
+  private http = inject(HttpClient);
   private router = inject(Router);
-  private url    = 'http://localhost:8081/api/auth';
+  private url = 'http://localhost:8081/api/auth';
 
   private _token = signal<string | null>(localStorage.getItem('token'));
   private _user  = signal<User | null>(JSON.parse(localStorage.getItem('user') ?? 'null'));
@@ -22,6 +22,12 @@ export class AuthService {
   isLoggedIn = computed(() => !!this._token());
   isAdmin  = computed(() => this._user()?.role === 'refugio');
   user = this._user.asReadonly();
+
+  private headers(): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: this.getToken() ?? '',
+    });
+  }
 
   getToken(): string | null {
     return this._token();
@@ -42,6 +48,25 @@ export class AuthService {
 
   register(name: string, email: string, password: string, role: string): Observable<any> {
     return this.http.post(`${this.url}/register`, { name, email, password, role });
+  }
+
+  updateUser(user: User): void {
+  this._user.set(user);
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+  update(id: string, data: { name?: string; email?: string; password?: string }): Observable<User> {
+    return this.http.put<User>(`${this.url}/update/${id}`, data, {
+      headers: this.headers(),
+    }).pipe(
+      tap(updated => this.updateUser(updated))
+    );
+  }
+
+  remove(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/delete/${id}`, {
+      headers: this.headers(),
+    });
   }
 
   logout(): void {

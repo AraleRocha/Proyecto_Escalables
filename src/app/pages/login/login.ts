@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth-service';
 
-export type UserRole = 'adoptante' | 'refugio';
+export type UserRole = 'adoptante';
 
 @Component({
   selector: 'app-login',
@@ -24,19 +24,18 @@ export class Login  implements OnInit{
   errorMessage = signal('');
 
   loginForm: FormGroup = this.fb.group({
-    email:    ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   registerForm: FormGroup = this.fb.group({
-    name:     ['', [Validators.required, Validators.minLength(3)]],
-    email:    ['', [Validators.required, Validators.email]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   roles: { value: UserRole; label: string; icon: string }[] = [ //Esto se cambiara para la base de datos
     { value: 'adoptante',  label: 'Adoptante',  icon: 'person' },
-    { value: 'refugio',    label: 'Refugio',    icon: 'home_health' },
   ];
 
   ngOnInit() {
@@ -75,18 +74,22 @@ export class Login  implements OnInit{
 
     const { name, email, password } = this.registerForm.value;
 
-    this.auth.register(name, email, password, this.selectedRole()).subscribe({
+    this.auth.register(name, email, password, 'adoptante').subscribe({
       next: () => {
-        this.isSubmitting.set(false);
-        // Después de registrar, ir al login
-        this.setMode('login');
-        this.errorMessage.set(''); // limpiar
+        this.auth.login(email, password).subscribe({
+          next: () => {
+            this.isSubmitting.set(false);
+            this.router.navigate(['/']);
+          },
+          error: () => {
+            this.isSubmitting.set(false);
+            this.setMode('login');
+          }
+        });
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        this.errorMessage.set(
-          err.error?.msg || 'Error al crear la cuenta. Intenta de nuevo.'
-        );
+        this.errorMessage.set(err.error?.msg || 'Error al crear la cuenta.');
       }
     });
   }

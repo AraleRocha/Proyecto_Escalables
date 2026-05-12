@@ -17,10 +17,11 @@ export class NavbarComponent {
   isAdmin = this.authService.isAdmin;
  
   navLinks = [
-    { label: 'Inicio',       path: '/' },
-    { label: 'Adoptar',      path: '/adoptar' },
+    { label: 'Inicio', path: '/' },
+    { label: 'Adoptar', path: '/adoptar' },
     { label: 'Voluntariado', path: '/voluntariado' },
-    { label: 'Donar',        path: '/donar' },
+    { label: 'Donar', path: '/donar' },
+    { label: 'Eventos', path: '/eventos' }
   ];
  
   @HostListener('window:scroll')

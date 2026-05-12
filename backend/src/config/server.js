@@ -8,6 +8,7 @@ const volunteerRoutes = require('../routes/volunteer.routes');
 const userRoutes = require('../routes/user.routes');
 const donationRoutes = require('../routes/donation.routes');
 const authRoutes = require('../routes/auth.routes');
+const eventRoutes = require('../routes/event.routes');
 
 class Server {
   constructor() {
@@ -31,6 +32,7 @@ class Server {
     this.app.use('/api/users', userRoutes);
     this.app.use('/api/donations', donationRoutes);
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/events', eventRoutes);
   }
 
   listen() {

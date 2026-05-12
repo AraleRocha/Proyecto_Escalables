@@ -69,4 +69,35 @@ const register = async (req = request, res = response) => {
   }
 };
 
-module.exports = { login, register };
+const update = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const updateData = { name, email };
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, select: '-password' }
+    );
+
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const remove = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ msg: 'Cuenta eliminada' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { login, register, update, remove };

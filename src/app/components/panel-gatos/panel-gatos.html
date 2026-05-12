@@ -13,7 +13,7 @@
   </div>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-    @for (cat of cats(); track cat.id) {
+    @for (cat of cats(); track cat._id) {
       <div class="group bg-white rounded-2xl overflow-hidden border border-primary/5 shadow-sm hover:shadow-md transition-shadow">
         <div class="relative aspect-[4/3] overflow-hidden bg-sage-light">
           <img [src]="cat.photo" [alt]="cat.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -37,6 +37,14 @@
             >
               Ver detalle
             </a>
+            <button
+              type="button"
+              (click)="openDeleteModal(cat._id!)"
+              class="w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+              title="Eliminar gato"
+            >
+              <span class="material-symbols-outlined text-sm">delete</span>
+            </button>
           </div>
         </div>
 
@@ -154,8 +162,7 @@
           <div class="space-y-2">
             @for (check of [
               { ctrl: 'isVaccinated',  label: 'Vacunado' },
-              { ctrl: 'isSterilized', label: 'Esterilizado' },
-              { ctrl: 'isDewormed',   label: 'Desparasitado' }
+              { ctrl: 'isSterilized', label: 'Esterilizado' }
             ]; track check.ctrl) {
               <label class="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" [formControlName]="check.ctrl"
@@ -182,5 +189,47 @@
         </div>
       </form>
     </aside>
+  }
+  @if (deleteModalOpen()) {
+    <div class="fixed inset-0 bg-natural-text/20 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
+
+        <div class="px-8 pt-8 pb-6 text-center">
+          <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-red-50">
+            <span class="material-symbols-outlined text-3xl text-red-400">
+              delete
+            </span>
+          </div>
+
+          <h3 class="text-xl font-extrabold text-natural-text mb-2">
+            ¿Eliminar gato?
+          </h3>
+
+          <p class="text-sm text-primary/60 leading-relaxed">
+            Esta acción eliminará al gato permanentemente del refugio.
+          </p>
+        </div>
+
+        <div class="border-t border-primary/5 mx-8"></div>
+
+        <div class="px-8 py-6 flex flex-col gap-3">
+          <button
+            (click)="deleteCat()"
+            [disabled]="deletingCat()"
+            class="w-full py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60"
+          >
+            {{ deletingCat() ? 'Eliminando...' : 'Sí, eliminar gato' }}
+          </button>
+
+          <button
+            (click)="deleteModalOpen.set(false)"
+            class="w-full py-3 bg-sage-light text-primary text-sm font-bold rounded-xl hover:bg-primary/10 transition-all"
+          >
+            Cancelar
+          </button>
+        </div>
+
+      </div>
+    </div>
   }
 </div>

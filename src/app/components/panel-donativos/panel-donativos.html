@@ -1,0 +1,65 @@
+<div class="bg-white rounded-2xl border border-primary/10 shadow-sm overflow-hidden">
+  <div class="px-8 py-6 border-b border-primary/5 flex items-center justify-between">
+    <h3 class="font-bold text-lg">Donaciones</h3>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-sage-light/30">
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">
+            Nombre
+          </th>
+
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">
+            Correo
+          </th>
+
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">
+            Monto
+          </th>
+
+          <th class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-primary/70">
+            Fecha
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-primary/5">
+        @for (don of donaciones(); track don._id) {
+          <tr class="hover:bg-crema/50 transition-colors">
+
+            <td class="px-8 py-5">
+              <div class="font-bold text-sm">
+                {{ getUserName(don.userId) }}
+              </div>
+            </td>
+
+            <td class="px-8 py-5">
+              <div class="text-sm text-primary/70">
+                {{ getUserEmail(don.userId) }}
+              </div>
+            </td>
+
+            <td class="px-8 py-5">
+              <div class="text-sm font-semibold text-primary">
+                ${{ don.amount }} MXN
+              </div>
+            </td>
+
+            <td class="px-8 py-5 text-sm text-primary/70">
+              {{ don.createdAt | date:'dd MMM yyyy' }}
+            </td>
+
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="px-8 py-12 text-center text-primary/40 text-sm">
+              No hay donaciones registradas.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

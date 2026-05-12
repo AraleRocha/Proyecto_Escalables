@@ -10,9 +10,7 @@
     <div class="space-y-12">
       <div>
         <h3 class="text-3xl font-bold text-natural-text mb-6">Nuestros Roles</h3>
-        <p class="text-primary/80 mb-8 leading-relaxed">
-          No importa cuánto tiempo tengas disponible, siempre hay una manera de ayudar.
-        </p>
+        <p class="text-primary/80 mb-8 leading-relaxed">No importa cuánto tiempo tengas disponible, siempre hay una manera de ayudar.</p>
       </div>
 
       <div class="space-y-8">
@@ -40,25 +38,30 @@
       } @else {
         <div class="mb-8">
           <h3 class="text-2xl font-bold mb-2">Inscríbete</h3>
+          @if (!authService.isLoggedIn()) {
+            <p class="text-sm text-primary/70">Debes iniciar sesión para continuar.</p>
+          } @else if (alreadyApplied()) {
+            <p class="text-sm text-primary/70">Ya enviaste una solicitud de voluntariado.</p>
+          }
         </div>
-
+        @if (authService.isLoggedIn() && authService.user()?.role === 'refugio') {
+          <div class="text-center py-8 text-primary/50">
+            <span class="material-symbols-outlined text-4xl mb-2 block">info</span>
+            <p class="text-sm">Las cuentas de refugio no pueden postularse como voluntarios.</p>
+          </div>
+        } @else {
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="nombre">Nombre Completo</label>
-            <input formControlName="nombre" id="nombre" type="text" placeholder="Juan Pérez"
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" 
-              [class.cursor-not-allowed]="authService.isLoggedIn()"/>
+            <input formControlName="nombre" id="nombre" type="text" placeholder="Juan Pérez" class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" [disabled]="!authService.isLoggedIn() || alreadyApplied()" />
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="email">Email</label>
-            <input formControlName="email" id="email" type="email" placeholder="juan@ejemplo.com"
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" 
-              [class.cursor-not-allowed]="authService.isLoggedIn()"/>
+            <input formControlName="email" id="email" type="email" placeholder="juan@ejemplo.com" class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" [disabled]="!authService.isLoggedIn() || alreadyApplied()" />
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="disponibilidad">Disponibilidad</label>
-            <select formControlName="disponibilidad" id="disponibilidad"
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm">
+            <select formControlName="disponibilidad" id="disponibilidad" class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm" [disabled]="!authService.isLoggedIn() || alreadyApplied()">
               <option value="manana">Días de semana (Mañana)</option>
               <option value="tarde">Días de semana (Tarde)</option>
               <option value="fines_de_semana">Fines de semana</option>
@@ -66,16 +69,22 @@
           </div>
           <div>
             <label class="block text-xs font-bold uppercase tracking-widest text-primary mb-2" for="mensaje">¿Por qué quieres unirte? (Opcional)</label>
-            <textarea formControlName="mensaje" id="mensaje" rows="4" placeholder="Cuéntanos un poco sobre ti..."
-              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm resize-none"></textarea>
+            <textarea formControlName="mensaje" id="mensaje" rows="4" placeholder="Cuéntanos un poco sobre ti..." class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-lg py-3 px-4 text-sm resize-none" [disabled]="!authService.isLoggedIn() || alreadyApplied()"></textarea>
           </div>
-          <button type="submit" [disabled]="isSubmitting() || form.invalid"
-            class="w-full py-4 bg-primary text-white font-bold rounded-lg hover:bg-sage-dark transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed">
-            {{ isSubmitting() ? 'Enviando...' : 'Enviar solicitud' }}
-          </button>
+
+          @if (authService.isLoggedIn()) {
+            <button type="submit" [disabled]="isSubmitting() || form.invalid || alreadyApplied()" class="w-full py-4 bg-primary text-white font-bold rounded-lg hover:bg-sage-dark transition-all shadow-md disabled:opacity-60 disabled:cursor-not-allowed">
+              {{ isSubmitting() ? 'Enviando...' : alreadyApplied() ? 'Ya enviado' : 'Enviar solicitud' }}
+            </button>
+          } @else {
+            <a routerLink="/login" class="w-full py-4 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary/20 transition-all flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">login</span>
+              Iniciar sesión para continuar
+            </a>
+          }
         </form>
+        }
       }
     </div>
-
   </div>
 </section>

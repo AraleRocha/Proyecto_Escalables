@@ -1,7 +1,7 @@
 <div class="w-full max-w-[800px] mx-auto px-6 py-12">
 
   <div class="flex gap-1 border-b border-primary/10 mb-8">
-    @for (tab of tabs; track tab.id) {
+    @for (tab of tabs(); track tab.id) {
       <button
         (click)="activeTab.set(tab.id)"
         class="px-5 py-3 border-b-2 border-transparent text-primary/50 hover:text-primary hover:border-primary/30 transition-all font-medium text-sm"
@@ -13,28 +13,6 @@
       </button>
     }
   </div>
-
-  @if (activeTab() === 'info') {
-    <div class="bg-white rounded-2xl border border-primary/5 shadow-sm p-8 space-y-5">
-
-      <h3 class="font-extrabold text-natural-text text-lg mb-6">Información de la cuenta</h3>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Nombre completo</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.name }}</div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Correo electrónico</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.email }}</div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Tipo de cuenta</label>
-          <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium text-natural-text">{{ user()?.role }}</div>
-        </div>
-      </div>
-    </div>
-  }
 
   @if (activeTab() === 'solicitudes') {
     @if (solicitudes().length === 0) {
@@ -86,4 +64,189 @@
     }
   }
 
+  @if (activeTab() === 'voluntariado') {
+    @if (voluntariados().length === 0) {
+      <div class="text-center py-20 bg-white rounded-2xl border border-primary/5 shadow-sm">
+        <span class="material-symbols-outlined text-5xl text-primary/20 mb-4 block">group</span>
+        <h3 class="font-extrabold text-natural-text text-lg mb-2">Aún no te has postulado</h3>
+        <p class="text-sm text-primary/50 mb-6">Únete a nuestro equipo de voluntarios.</p>
+        <a routerLink="/voluntariado"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold text-sm rounded-full hover:bg-sage-dark transition-all">
+          <span class="material-symbols-outlined text-sm">favorite</span>
+          Ver voluntariado
+        </a>
+      </div>
+    } @else {
+      <div class="space-y-4">
+        @for (vol of voluntariados(); track vol._id) {
+          <div class="bg-white rounded-2xl border border-primary/5 shadow-sm overflow-hidden flex">
+
+            <div class="w-28 h-28 flex-shrink-0 bg-sage-light flex items-center justify-center">
+              <span class="material-symbols-outlined text-4xl text-primary/30">volunteer_activism</span>
+            </div>
+
+            <div class="flex-1 p-5 flex items-center justify-between gap-4">
+              <div>
+                <h4 class="font-extrabold text-natural-text mb-1">Solicitud de Voluntariado</h4>
+                <p class="text-xs text-primary/50">{{ availabilityLabel(vol.availability) }}</p>
+                <p class="text-xs text-primary/50">Fecha que fue enviada: {{ vol.createdAt ? formatDate(vol.createdAt) : '' }}</p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex-shrink-0"
+              >
+                {{ voluntarioStatusLabel[vol.status ?? 'pendiente'] }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (activeTab() === 'info') {
+    <div class="bg-white rounded-2xl border border-primary/5 shadow-sm p-8 space-y-5">
+
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="font-extrabold text-natural-text text-lg">Información de la cuenta</h3>
+        <button (click)="isEditing.set(!isEditing())"
+          class="text-xs font-bold text-primary hover:text-sage-dark transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">{{ isEditing() ? 'close' : 'edit' }}</span>
+          {{ isEditing() ? 'Cancelar' : 'Editar' }}
+        </button>
+      </div>
+
+      @if (!isEditing()) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Nombre</label>
+            <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium">{{ user()?.name }}</div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Correo</label>
+            <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium">{{ user()?.email }}</div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Tipo de cuenta</label>
+            <div class="px-4 py-3 bg-crema rounded-xl text-sm font-medium capitalize">{{ user()?.role }}</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-primary/5">
+          <button
+            (click)="deleteModalOpen.set(true)"
+            class="px-5 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all"
+          >
+            Eliminar cuenta
+          </button>
+        </div>
+
+      } @else {
+        <!-- Formulario edición -->
+        <form [formGroup]="editForm" (ngSubmit)="saveProfile()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Nombre</label>
+            <input formControlName="name" type="text"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-xl py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">Correo</label>
+            <input formControlName="email" type="email"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-xl py-3 px-4 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-primary/60 mb-1">
+              Nueva contraseña <span class="font-normal text-primary/40 normal-case tracking-normal">(dejar vacío para no cambiar)</span>
+            </label>
+            <input formControlName="password" type="password" placeholder="••••••••"
+              class="w-full border-primary/10 bg-crema focus:ring-primary focus:border-primary rounded-xl py-3 px-4 text-sm" />
+          </div>
+          <button type="submit" [disabled]="editForm.invalid || isSaving()"
+            class="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:bg-sage-dark transition-all disabled:opacity-60">
+            {{ isSaving() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      }
+    </div>
+  }
+
+  @if (activeTab() === 'donaciones') {
+    @if (donaciones().length === 0) {
+      <div class="text-center py-20 bg-white rounded-2xl border border-primary/5 shadow-sm">
+        <span class="material-symbols-outlined text-5xl text-primary/20 mb-4 block">favorite</span>
+        <h3 class="font-extrabold text-natural-text text-lg mb-2">Aún no has donado</h3>
+        <p class="text-sm text-primary/50 mb-6">Tu apoyo hace la diferencia.</p>
+        <a routerLink="/donar"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold text-sm rounded-full hover:bg-sage-dark transition-all">
+          <span class="material-symbols-outlined text-sm">volunteer_activism</span>
+          Donar ahora
+        </a>
+      </div>
+    } @else {
+      <div class="space-y-4">
+        @for (don of donaciones(); track don._id) {
+          <div class="bg-white rounded-2xl border border-primary/5 shadow-sm flex overflow-hidden">
+            <div class="w-28 h-24 flex-shrink-0 bg-sage-light flex items-center justify-center">
+              <span class="material-symbols-outlined text-4xl text-primary/30">favorite</span>
+            </div>
+            <div class="flex-1 p-5 flex items-center justify-between gap-4">
+              <div>
+                <h4 class="font-extrabold text-natural-text mb-1">${{ don.amount }} MXN</h4>
+                <p class="text-xs text-primary/50">{{ don.createdAt ? formatDate(don.createdAt) : '' }}</p>
+                @if (don.cardLast4) {
+                  <p class="text-xs text-primary/40">Tarjeta terminada en {{ don.cardLast4 }}</p>
+                }
+              </div>
+              <span class="px-3 py-1 text-green-700 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
+                Completada
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (deleteModalOpen()) {
+    <div class="fixed inset-0 bg-natural-text/20 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+      <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
+        
+        <div class="px-8 pt-8 pb-6 text-center">
+          <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-red-50">
+            <span class="material-symbols-outlined text-3xl text-red-400">
+              delete_forever
+            </span>
+          </div>
+
+          <h3 class="text-xl font-extrabold text-natural-text mb-2">
+            ¿Eliminar cuenta?
+          </h3>
+
+          <p class="text-sm text-primary/60 leading-relaxed">
+            Esta acción eliminará permanentemente tu cuenta y no se podrá deshacer.
+          </p>
+        </div>
+
+        <div class="border-t border-primary/5 mx-8"></div>
+
+        <div class="px-8 py-6 flex flex-col gap-3">
+          <button
+            (click)="deleteAccount()"
+            [disabled]="deletingAccount()"
+            class="w-full py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60"
+          >
+            {{ deletingAccount() ? 'Eliminando...' : 'Sí, eliminar cuenta' }}
+          </button>
+
+          <button
+            (click)="deleteModalOpen.set(false)"
+            class="w-full py-3 bg-sage-light text-primary text-sm font-bold rounded-xl hover:bg-primary/10 transition-all"
+          >
+            Cancelar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
 </div>

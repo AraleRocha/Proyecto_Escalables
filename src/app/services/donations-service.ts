@@ -1,35 +1,45 @@
-import { Injectable, signal } from '@angular/core';
-import { DonationPayment } from '../interfaces/donation-payment';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth-service';
 
 export interface DonationRecord {
-  id: string;
+  _id?: string;
   amount: number;
-  createdAt: Date;
-  receiptUrl?: string;
+  cardLast4?: string;
+  userId?: string | {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt?: Date;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class DonationsService {
-   private history = signal<DonationRecord[]>([]);
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private url  = 'http://localhost:8081/api/donations';
 
-  getHistory(): DonationRecord[] {
-    return this.history();
+  private headers(): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: this.authService.getToken() ?? '',
+    });
   }
 
-  processDonation(payment: DonationPayment): Promise<DonationRecord> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const record: DonationRecord = {
-          id: Date.now().toString(),
-          amount: payment.amount,
-          createdAt: new Date(),
-          receiptUrl: `/recibos/${Date.now()}`,
-        };
-        this.history.update(h => [record, ...h]);
-        resolve(record);
-      }, 1200);
+  create(data: { amount: number; cardNumber: string; userId?: string }): Observable<DonationRecord> {
+    return this.http.post<DonationRecord>(this.url, data);
+  }
+
+  getAll(): Observable<DonationRecord[]> {
+    return this.http.get<DonationRecord[]>(this.url, { headers: this.headers() });
+  }
+
+  getByUser(userId: string): Observable<DonationRecord[]> {
+    return this.http.get<DonationRecord[]>(`${this.url}/user/${userId}`, {
+      headers: this.headers(),
     });
   }
 }

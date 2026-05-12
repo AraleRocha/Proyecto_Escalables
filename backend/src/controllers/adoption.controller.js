@@ -1,4 +1,5 @@
 const Adoption = require('../models/adoption.model');
+const Cat = require('../models/cat.model'); 
 
 const getAll = async (req, res) => { //Obtener todas las adopciones
   try {
@@ -20,6 +21,9 @@ const create = async (req, res) => { //Crear una adopcion
     }
     const adoption = new Adoption(req.body);
     await adoption.save();
+
+    await Cat.findByIdAndUpdate(catId, { status: 'en_proceso' });
+    
     res.status(201).json(adoption);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -44,6 +48,17 @@ const updateStatus = async (req, res) => {
       { new: true }
     );
     if (!adoption) return res.status(404).json({ error: 'Solicitud no encontrada' });
+
+    // Si se aprueba, actualizar el estado del gato a adoptado
+    if (status === 'aceptada') {
+      await Cat.findByIdAndUpdate(adoption.catId, { status: 'adoptado' });
+    }
+
+    // Si se rechaza y el gato estaba en proceso, regresarlo a disponible
+    if (status === 'rechazada') {
+      await Cat.findByIdAndUpdate(adoption.catId, { status: 'disponible' });
+    }
+
     res.json(adoption);
   } catch (error) {
     res.status(400).json({ error: error.message });

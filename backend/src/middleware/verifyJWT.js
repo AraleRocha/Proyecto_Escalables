@@ -19,7 +19,8 @@ const verifyJWT = async (req= request, res = response, next) => {
                 msg: 'Invalid token'
             });
         }
-        req.activeUserRole = user.roles;
+        req.activeUserRole = user.role;
+        req.activeUser = user;
         next();
     } catch (error) {
         return res.status(401).json({

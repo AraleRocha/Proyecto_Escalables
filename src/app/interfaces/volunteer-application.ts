@@ -5,4 +5,5 @@ export interface VolunteerApplication {
   availability: 'manana' | 'tarde' | 'fines_de_semana';
   message?: string;
   status?: 'pendiente' | 'aceptado' | 'rechazado';
+  createdAt?: Date;
 }

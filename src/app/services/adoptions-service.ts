@@ -8,7 +8,7 @@ import { AuthService } from './auth-service';
 export class AdoptionsService {
 
   private http = inject(HttpClient);
-  private url  = `http://localhost:8081/api/adoptions`;
+  private url = `http://localhost:8081/api/adoptions`;
   private authService = inject(AuthService);
 
   private headers() {
@@ -18,12 +18,12 @@ export class AdoptionsService {
   }
 
   getAll(): Observable<AdoptionRequest[]> {
-    return this.http.get<AdoptionRequest[]>(this.url, { headers: this.headers() });
+    return this.http.get<AdoptionRequest[]>(this.url,  { headers: this.headers() });
   }
 
   //Solo las solicitudes del usuario que este usando la pagina
   getByUser(userId: string): Observable<AdoptionRequest[]> {
-    return this.http.get<AdoptionRequest[]>(`${this.url}/user/${userId}`, { headers: this.headers() });
+    return this.http.get<AdoptionRequest[]>(`${this.url}/user/${userId}`);
   }
 
   updateStatus(id: string, status: 'aceptada' | 'rechazada'): Observable<AdoptionRequest> {

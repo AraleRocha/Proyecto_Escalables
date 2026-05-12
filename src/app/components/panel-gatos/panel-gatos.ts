@@ -17,6 +17,10 @@ export class PanelGatos implements OnInit {
   private catsService = inject(CatService);
   private fb = inject(FormBuilder);
  
+  deleteModalOpen = signal(false);
+  deletingCat = signal(false);
+  catToDelete = signal<string | null>(null);
+
   showForm = signal(false);
   isSubmitting = signal(false);
  
@@ -41,7 +45,6 @@ export class PanelGatos implements OnInit {
     photoUrl: ['', Validators.required],
     isVaccinated: [false],
     isSterilized: [false],
-    isDewormed: [false],
   });
  
   toggleBehavior(b: CatBehavior) {
@@ -52,29 +55,54 @@ export class PanelGatos implements OnInit {
   }
  
   async onSubmit() {
-  if (this.form.invalid || this.selectedBehaviors().length === 0) return;
-  this.isSubmitting.set(true);
+    if (this.form.invalid || this.selectedBehaviors().length === 0) return;
+    this.isSubmitting.set(true);
 
-  const v = this.form.value;
-  this.catsService.add({
-    name:         v.name,
-    age:          v.age,
-    ageCategory:  v.ageCategory,
-    gender:       v.gender,
-    breed:        v.breed,
-    size:         v.size,
-    story:        v.story,
-    photo:        v.photoUrl,
-    behavior:     this.selectedBehaviors(),
-    isVaccinated: v.isVaccinated,
-    isSterilized: v.isSterilized,
-    status:       'disponible',
-  }).subscribe(() => {                          // ← agregar subscribe
-    this.catsService.getAll().subscribe(data => this.cats.set(data)); // recargar lista
-    this.form.reset({ ageCategory: 'adulto', gender: 'macho', size: 'mediano', breed: 'Común Europeo' });
-    this.selectedBehaviors.set([]);
-    this.isSubmitting.set(false);
-    this.showForm.set(false);
+    const v = this.form.value;
+    this.catsService.create({
+      name: v.name,
+      age: v.age,
+      ageCategory: v.ageCategory,
+      gender: v.gender,
+      breed: v.breed,
+      size: v.size,
+      story: v.story,
+      photo: v.photoUrl,
+      behavior: this.selectedBehaviors(),
+      isVaccinated: v.isVaccinated,
+      isSterilized: v.isSterilized,
+      status: 'disponible',
+    }).subscribe(() => {                     
+      this.catsService.getAll().subscribe(data => this.cats.set(data)); 
+      this.form.reset({ ageCategory: 'adulto', gender: 'macho', size: 'mediano', breed: 'Común Europeo' });
+      this.selectedBehaviors.set([]);
+      this.isSubmitting.set(false);
+      this.showForm.set(false);
+    });
+  }
+
+  openDeleteModal(id: string) {
+    this.catToDelete.set(id);
+    this.deleteModalOpen.set(true);
+  }
+
+deleteCat() {
+  const id = this.catToDelete();
+  if (!id) return;
+
+  this.deletingCat.set(true);
+
+  this.catsService.remove(id).subscribe({
+    next: () => {
+      this.cats.set(this.cats().filter(cat => cat._id !== id));
+      this.deletingCat.set(false);
+      this.deleteModalOpen.set(false);
+      this.catToDelete.set(null);
+    },
+    error: (err) => {
+      console.error('Error al eliminar gato', err);
+      this.deletingCat.set(false);
+    }
   });
 }
 }
