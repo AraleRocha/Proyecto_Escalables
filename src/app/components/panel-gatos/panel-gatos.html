@@ -190,46 +190,13 @@
       </form>
     </aside>
   }
-  @if (deleteModalOpen()) {
-    <div class="fixed inset-0 bg-natural-text/20 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div class="bg-white w-full max-w-sm rounded-3xl shadow-xl border border-primary/5 overflow-hidden">
-
-        <div class="px-8 pt-8 pb-6 text-center">
-          <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-red-50">
-            <span class="material-symbols-outlined text-3xl text-red-400">
-              delete
-            </span>
-          </div>
-
-          <h3 class="text-xl font-extrabold text-natural-text mb-2">
-            ¿Eliminar gato?
-          </h3>
-
-          <p class="text-sm text-primary/60 leading-relaxed">
-            Esta acción eliminará al gato permanentemente del refugio.
-          </p>
-        </div>
-
-        <div class="border-t border-primary/5 mx-8"></div>
-
-        <div class="px-8 py-6 flex flex-col gap-3">
-          <button
-            (click)="deleteCat()"
-            [disabled]="deletingCat()"
-            class="w-full py-3 bg-red-500 text-white text-sm font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-60"
-          >
-            {{ deletingCat() ? 'Eliminando...' : 'Sí, eliminar gato' }}
-          </button>
-
-          <button
-            (click)="deleteModalOpen.set(false)"
-            class="w-full py-3 bg-sage-light text-primary text-sm font-bold rounded-xl hover:bg-primary/10 transition-all"
-          >
-            Cancelar
-          </button>
-        </div>
-
-      </div>
-    </div>
-  }
+  <app-modal-delete
+    [open]="deleteModalOpen()"
+    [title]="'¿Eliminar gato?'"
+    [message]="'Esta acción eliminará al gato permanentemente del refugio.'"
+    [loading]="deletingCat()"
+    confirmText="Sí, eliminar gato"
+    (confirm)="deleteCat()"
+    (close)="deleteModalOpen.set(false)"
+  />
 </div>

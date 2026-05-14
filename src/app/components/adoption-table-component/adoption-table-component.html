@@ -60,11 +60,17 @@
                   >
                     <span class="material-symbols-outlined text-base">close</span>
                   </button>
-                } @else {
-                  <button class="text-primary/40 hover:text-primary p-2">
-                    <span class="material-symbols-outlined">more_vert</span>
-                  </button>
-                }
+                } @else if (req.status === 'rechazada') {
+                <button
+                  (click)="delete.emit(req._id)"
+                  class="p-2 bg-red-100 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-all"
+                  title="Eliminar"
+                >
+                  <span class="material-symbols-outlined text-base">delete</span>
+                </button>
+              } @else {
+                <span class="text-xs font-bold text-primary/30 italic">Revisado</span>
+              }
               </div>
             </td>
           </tr>

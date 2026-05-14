@@ -5,7 +5,6 @@ const getAll = async (req, res) => {
     const donations = await Donation.find().populate('userId', 'name email').sort({ createdAt: -1 });
     res.json(donations);
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       error: 'Error al obtener las donaciones'
     });

@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CatService } from '../../services/cat-service';
 import { Cat } from '../../interfaces/cat';
+import { ModalDelete } from "../modal-delete/modal-delete";
 
 export type CatBehavior = 'tranquilo' | 'activo' | 'cariñoso' | 'independiente' | 'sociable';
 
 @Component({
   selector: 'app-panel-gatos',
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ModalDelete],
   templateUrl: './panel-gatos.html',
   styleUrl: './panel-gatos.css',
 })
@@ -86,23 +87,23 @@ export class PanelGatos implements OnInit {
     this.deleteModalOpen.set(true);
   }
 
-deleteCat() {
-  const id = this.catToDelete();
-  if (!id) return;
+  deleteCat() {
+    const id = this.catToDelete();
+    if (!id) return;
 
-  this.deletingCat.set(true);
+    this.deletingCat.set(true);
 
-  this.catsService.remove(id).subscribe({
-    next: () => {
-      this.cats.set(this.cats().filter(cat => cat._id !== id));
-      this.deletingCat.set(false);
-      this.deleteModalOpen.set(false);
-      this.catToDelete.set(null);
-    },
-    error: (err) => {
-      console.error('Error al eliminar gato', err);
-      this.deletingCat.set(false);
-    }
-  });
-}
+    this.catsService.remove(id).subscribe({
+      next: () => {
+        this.cats.set(this.cats().filter(cat => cat._id !== id));
+        this.deletingCat.set(false);
+        this.deleteModalOpen.set(false);
+        this.catToDelete.set(null);
+      },
+      error: (err) => {
+        console.error('Error al eliminar gato', err);
+        this.deletingCat.set(false);
+      }
+    });
+  }
 }

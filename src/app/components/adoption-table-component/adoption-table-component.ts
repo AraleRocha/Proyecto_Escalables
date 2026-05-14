@@ -12,4 +12,5 @@ export class AdoptionTableComponent {
   @Input({ required: true }) requests: AdoptionRequest[] = [];
   @Output() approve = new EventEmitter<string>();
   @Output() reject  = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<string>();
 }

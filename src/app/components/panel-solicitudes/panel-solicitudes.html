@@ -3,5 +3,15 @@
     [requests]="requests()"
     (approve)="approve($event)"
     (reject)="reject($event)"
+    (delete)="openDeleteModal($event)"
+  />
+  <app-modal-delete
+    [open]="deleteModalOpen()"
+    [title]="'¿Eliminar solicitud?'"
+    [message]="'Esta acción eliminará la solicitud permanentemente.'"
+    [loading]="deletingRequest()"
+    confirmText="Sí, eliminar solicitud"
+    (confirm)="deleteRequest()"
+    (close)="deleteModalOpen.set(false)"
   />
 </div>

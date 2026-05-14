@@ -73,4 +73,14 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { getAll, create, getByUser, updateStatus };
+const remove = async (req, res) => {
+  try {
+    const adoptions = await Adoption.findByIdAndDelete( req.params.id );
+    if (!adoptions) return res.status(404).json({ error: 'Solicitud no encontrado' });
+    res.json({ mensaje: 'Solicitud elimminada eliminado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar la solicitud' });
+  }
+}
+
+module.exports = { getAll, create, getByUser, updateStatus, remove };

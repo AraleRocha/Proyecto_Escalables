@@ -27,7 +27,7 @@
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="grid grid-cols-2 gap-4 mb-4">
             <div class="p-4 bg-crema rounded-2xl border border-primary/5">
               <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Raza</p>
               <p class="text-sm font-bold">{{ c.breed }}</p>
@@ -43,6 +43,12 @@
             <div class="p-4 bg-crema rounded-2xl border border-primary/5">
               <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Esterilizado</p>
               <p class="text-sm font-bold">{{ c.isSterilized ? 'Sí' : 'No' }}</p>
+            </div>
+          </div>
+          <div class="mb-8">
+            <div class="p-4 bg-crema rounded-2xl border border-primary/5">
+              <p class="text-[10px] uppercase tracking-widest text-primary/60 font-bold mb-1">Historia</p>
+              <p class="text-sm font-bold">{{ c.story }}</p>
             </div>
           </div>
 

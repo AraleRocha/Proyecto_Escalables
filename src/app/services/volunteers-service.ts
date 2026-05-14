@@ -31,4 +31,7 @@ export class VolunteersService {
   updateStatus(id: string, status: 'aceptado' | 'rechazado'): Observable<VolunteerWithId> {
     return this.http.put<VolunteerWithId>(`${this.url}/${id}`, { status }, { headers: this.headers() });
   }
+  remove(id: string): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`, { headers: this.headers() });
+  }
 }

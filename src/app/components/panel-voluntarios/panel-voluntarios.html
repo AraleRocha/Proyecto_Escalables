@@ -58,6 +58,14 @@
                     >
                       <span class="material-symbols-outlined text-base">close</span>
                     </button>
+                  } @else if (getStatus(app) === 'rechazado') {
+                    <button
+                      (click)="openDeleteModal(app._id!)"
+                      class="p-2 bg-red-100 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-all"
+                      title="Eliminar"
+                    >
+                      <span class="material-symbols-outlined text-base">delete</span>
+                    </button>
                   } @else {
                     <span class="text-xs font-bold text-primary/30 italic">Revisado</span>
                   }
@@ -70,3 +78,13 @@
     </div>
   }
 </div>
+
+<app-modal-delete
+  [open]="deleteModalOpen()"
+  [title]="'¿Eliminar solicitud de voluntariado?'"
+  [message]="'Esta acción eliminará la solicitud permanentemente.'"
+  [loading]="deletingVolunteer()"
+  confirmText="Sí, eliminar"
+  (confirm)="deleteVolunteer()"
+  (close)="deleteModalOpen.set(false)"
+/>

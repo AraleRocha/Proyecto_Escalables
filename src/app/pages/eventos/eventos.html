@@ -35,14 +35,6 @@
           <div class="p-6">
             <div class="flex items-start justify-between gap-3 mb-2">
               <h3 class="font-extrabold text-natural-text text-lg line-clamp-1">{{ event.title }}</h3>
-              <button
-                type="button"
-                (click)="openDeleteModal(event._id!)"
-                class="w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-500 hover:text-white transition-all"
-                title="Eliminar evento"
-              >
-                <span class="material-symbols-outlined text-sm">delete</span>
-              </button>
             </div>
 
             <p class="text-sm text-primary/60 mb-4 line-clamp-2">{{ event.description }}</p>

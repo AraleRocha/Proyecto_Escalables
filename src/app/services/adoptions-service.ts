@@ -33,4 +33,8 @@ export class AdoptionsService {
   create(request: Omit<AdoptionRequest, 'id' | 'createdAt'>): Observable<AdoptionRequest> {
     return this.http.post<AdoptionRequest>(this.url, request, { headers: this.headers() });
   }
+
+  remove(id: string): Observable<AdoptionRequest> {
+    return this.http.delete<AdoptionRequest>(`${this.url}/${id}`, { headers: this.headers() });
+  }
 }

@@ -35,4 +35,14 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { getAll, create, updateStatus };
+const remove = async (req, res) => {
+  try {
+    const volunteer = await Volunteer.findByIdAndDelete( req.params.id );
+    if (!volunteer) return res.status(404).json({ error: 'Solicitud de voluntariado no encontrado' });
+    res.json({ mensaje: 'Solicitud de voluntariado elimminada eliminado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar la solicitud de voluntariado' });
+  }
+}
+
+module.exports = { getAll, create, updateStatus, remove};
